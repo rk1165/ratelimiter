@@ -36,6 +36,10 @@ dependencies {
     // Caffeine cache for in-memory rate limiting with TTL support
     implementation "com.github.ben-manes.caffeine:caffeine:$caffeineVersion"
 
+    implementation "net.datafaker:datafaker:$dataFakerVersion"
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$swaggerVersion"
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'

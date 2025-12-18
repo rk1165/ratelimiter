@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,28 +35,6 @@ public class ApiController {
     public ResponseEntity<Map<String, Object>> test() {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Request successful!");
-        response.put("timestamp", Instant.now().toString());
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/resource")
-    public ResponseEntity<Map<String, Object>> resource() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Resource fetched successfully!");
-        response.put("data", Map.of(
-                "id", 1,
-                "name", "Sample resource",
-                "createdAt", Instant.now().toString()
-        ));
-        response.put("timestamp", Instant.now().toString());
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/data")
-    public ResponseEntity<Map<String, Object>> createData(@RequestBody(required = false) Map<String, Object> payload) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Data created successfully!");
-        response.put("received", payload);
         response.put("timestamp", Instant.now().toString());
         return ResponseEntity.ok(response);
     }

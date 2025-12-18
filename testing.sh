@@ -20,3 +20,5 @@ curl http://localhost:8080/api/v1/limit/config
 
 curl -X POST "http://localhost:8080/api/v1/limit/reset?key=ip:127.0.0.1"
 
+curl -4 http://localhost:8080/api/v1/jokes/pun
+curl -4 http://localhost:8080/api/v1/jokes/knock-knock
