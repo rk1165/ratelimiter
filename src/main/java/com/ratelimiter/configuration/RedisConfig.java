@@ -1,6 +1,6 @@
 package com.ratelimiter.configuration;
 
-import com.ratelimiter.ApplicationConstants;
+import com.ratelimiter.utils.ApplicationConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

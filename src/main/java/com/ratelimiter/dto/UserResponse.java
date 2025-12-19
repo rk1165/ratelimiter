@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+import static com.ratelimiter.utils.ApplicationUtils.maskApiKey;
+
 @Data
 @NoArgsConstructor
 public class UserResponse {
@@ -37,13 +39,6 @@ public class UserResponse {
         UserResponse userResponse = fromUser(user);
         userResponse.setApiKey(maskApiKey(user.getApiKey()));
         return userResponse;
-    }
-
-    private static String maskApiKey(String apiKey) {
-        if (apiKey == null || apiKey.length() < 10) {
-            return "***";
-        }
-        return apiKey.substring(0, 7) + "..." + apiKey.substring(apiKey.length() - 4);
     }
 
 }

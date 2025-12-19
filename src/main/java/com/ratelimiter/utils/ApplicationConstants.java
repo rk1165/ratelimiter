@@ -1,4 +1,4 @@
-package com.ratelimiter;
+package com.ratelimiter.utils;
 
 public class ApplicationConstants {
 

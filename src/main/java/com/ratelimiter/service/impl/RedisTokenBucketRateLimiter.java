@@ -1,4 +1,4 @@
-package com.ratelimiter.service;
+package com.ratelimiter.service.impl;
 
 import com.ratelimiter.configuration.RateLimitConfig;
 import com.ratelimiter.model.RateLimitResult;
@@ -84,7 +84,11 @@ public class RedisTokenBucketRateLimiter extends AbstractTokenBucketRateLimiter 
 
     @Override
     protected TokenBucket getOrCreateBucket(String bucketKey, long bucketCapacity, double bucketRefillRate, long currentTimeMs) {
-        return null;
+        // Redis implementation relies on the Lua script path and should never call
+        // the in-memory bucket creation used by other implementations. If this method
+        // is invoked, it indicates an unexpected code path; fail fast to avoid
+        // silently bypassing Redis.
+        throw new UnsupportedOperationException("RedisTokenBucketRateLimiter does not use local TokenBucket instances");
     }
 
     @Override

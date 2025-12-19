@@ -1,11 +1,12 @@
-package com.ratelimiter.service;
+package com.ratelimiter.service.impl;
 
 import com.ratelimiter.configuration.RateLimitConfig;
 import com.ratelimiter.model.RateLimitResult;
 import com.ratelimiter.model.TokenBucket;
+import com.ratelimiter.service.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.ratelimiter.ApplicationConstants.KEY_PREFIX;
+import static com.ratelimiter.utils.ApplicationConstants.KEY_PREFIX;
 
 /**
  * Abstract base class for Token Bucket Rate Limiter implementations.

@@ -1,4 +1,4 @@
-package com.ratelimiter.service;
+package com.ratelimiter.service.impl;
 
 import com.ratelimiter.configuration.RateLimitConfig;
 import com.ratelimiter.model.TokenBucket;

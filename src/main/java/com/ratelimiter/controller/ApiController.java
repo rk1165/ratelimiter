@@ -64,7 +64,6 @@ public class ApiController {
     @GetMapping("/limit/config")
     public ResponseEntity<Map<String, Object>> getLimitConfig() {
         Map<String, Object> response = new HashMap<>();
-        response.put("enabled", rateLimitConfig.isEnabled());
         response.put("defaultCapacity", rateLimitConfig.getDefaultCapacity());
         response.put("defaultFillRate", rateLimitConfig.getDefaultRefillRate());
 

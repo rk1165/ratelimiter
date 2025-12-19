@@ -1,4 +1,4 @@
-package com.ratelimiter.service;
+package com.ratelimiter.service.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

@@ -1,9 +1,9 @@
 package com.ratelimiter.configuration;
 
-import com.ratelimiter.service.CaffeineTokenBucketRateLimiter;
-import com.ratelimiter.service.InMemoryTokenBucketRateLimiter;
+import com.ratelimiter.service.impl.CaffeineTokenBucketRateLimiter;
+import com.ratelimiter.service.impl.InMemoryTokenBucketRateLimiter;
 import com.ratelimiter.service.RateLimiter;
-import com.ratelimiter.service.RedisTokenBucketRateLimiter;
+import com.ratelimiter.service.impl.RedisTokenBucketRateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
