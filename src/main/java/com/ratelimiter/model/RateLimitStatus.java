@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RateLimitResult {
+public class RateLimitStatus {
 
     // whether the request is allowed (true) or should be rejected (false)
     private boolean allowed;
@@ -49,8 +49,8 @@ public class RateLimitResult {
     private long resetAtSeconds;
 
     // Creates a successful (allowed) result
-    public static RateLimitResult allowed(long remainingTokens, long limit) {
-        return RateLimitResult.builder()
+    public static RateLimitStatus allowed(long remainingTokens, long limit) {
+        return RateLimitStatus.builder()
                 .allowed(true)
                 .remainingTokens(remainingTokens)
                 .limit(limit)
@@ -60,9 +60,9 @@ public class RateLimitResult {
     }
 
     // Creates a rejected (rate limited) result
-    public static RateLimitResult rejected(long remainingTokens, long limit, long retryAfterMs) {
+    public static RateLimitStatus rejected(long remainingTokens, long limit, long retryAfterMs) {
         long resetAtSeconds = (System.currentTimeMillis() + retryAfterMs) / 1000;
-        return RateLimitResult.builder()
+        return RateLimitStatus.builder()
                 .allowed(false)
                 .remainingTokens(remainingTokens)
                 .limit(limit)

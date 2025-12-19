@@ -1,7 +1,7 @@
 package com.ratelimiter.service.impl;
 
 import com.ratelimiter.configuration.RateLimitConfig;
-import com.ratelimiter.model.RateLimitResult;
+import com.ratelimiter.model.RateLimitStatus;
 import com.ratelimiter.model.TokenBucket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -44,7 +44,7 @@ public class RedisTokenBucketRateLimiter extends AbstractTokenBucketRateLimiter 
     }
 
     @Override
-    public RateLimitResult tryConsume(String key, long tokens, long bucketCapacity, double bucketRefillRate) {
+    public RateLimitStatus tryConsume(String key, long tokens, long bucketCapacity, double bucketRefillRate) {
         String bucketKey = buildBucketKey(key);
         long currentTimeMs = System.currentTimeMillis();
 
@@ -62,7 +62,7 @@ public class RedisTokenBucketRateLimiter extends AbstractTokenBucketRateLimiter 
             if (result == null || result.size() < 3) {
                 log.error("Unexpected result from Redis script for key: {}", key);
                 // Fail open - allow request if Redis returns unexpected result
-                return RateLimitResult.allowed(bucketCapacity, bucketCapacity);
+                return RateLimitStatus.allowed(bucketCapacity, bucketCapacity);
             }
 
             long allowed = result.get(0);
@@ -78,7 +78,7 @@ public class RedisTokenBucketRateLimiter extends AbstractTokenBucketRateLimiter 
             log.error("Redis error during rate limit check for key: {}", key, e);
             // Fail open - allow request if Redis is unavailable
             // Prefer availability over strict rate limiting
-            return RateLimitResult.allowed(bucketCapacity, bucketCapacity);
+            return RateLimitStatus.allowed(bucketCapacity, bucketCapacity);
         }
     }
 

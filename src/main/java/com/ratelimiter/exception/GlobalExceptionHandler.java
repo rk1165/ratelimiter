@@ -1,7 +1,6 @@
 package com.ratelimiter.exception;
 
-import com.ratelimiter.model.RateLimitResult;
-import com.ratelimiter.utils.ApplicationConstants;
+import com.ratelimiter.model.RateLimitStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,23 +23,21 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(RateLimitExceededException.class)
     public ResponseEntity<Map<String, Object>> handleRateLimitExceeded(RateLimitExceededException ex) {
-        ResponseEntity<Map<String, Object>> response = createResponse("Too Many Requests", ex.getMessage(), HttpStatus.TOO_MANY_REQUESTS);
+        Map<String, Object> body = createBody("Too Many Requests", ex.getMessage(), HttpStatus.TOO_MANY_REQUESTS);
 
-        RateLimitResult result = ex.getRateLimitResult();
+        RateLimitStatus result = ex.getRateLimitStatus();
         Map<String, Object> rateLimitDetails = new HashMap<>();
         rateLimitDetails.put("limit", result.getLimit());
         rateLimitDetails.put("remaining", result.getRemainingTokens());
         rateLimitDetails.put("resetAt", result.getResetAtSeconds());
         rateLimitDetails.put("retryAfterMs", result.getRetryAfterMs());
         rateLimitDetails.put("retryAfterSeconds", ex.getRetryAfterSeconds());
-        response.getBody().put("rateLimitDetails", rateLimitDetails);
+        body.put("rateLimitDetails", rateLimitDetails);
         log.debug("Returning 429 response for identifier: {}", ex.getIdentifier());
 
-        response.getHeaders().add(ApplicationConstants.HEADER_RATE_LIMIT_LIMIT, String.valueOf(result.getLimit()));
-        response.getHeaders().add(ApplicationConstants.HEADER_RATE_LIMIT_REMAINING, String.valueOf(result.getRemainingTokens()));
-        response.getHeaders().add(ApplicationConstants.HEADER_RATE_LIMIT_RESET, String.valueOf(result.getResetAtSeconds()));
-        response.getHeaders().add(ApplicationConstants.HEADER_RETRY_AFTER, String.valueOf(ex.getRetryAfterSeconds()));
-        return response;
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(body);
     }
 
     /**
@@ -73,13 +70,17 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<Map<String, Object>> createResponse(String error, String message, HttpStatus status) {
+        return ResponseEntity
+                .status(status)
+                .body(createBody(error, message, status));
+    }
+
+    private Map<String, Object> createBody(String error, String message, HttpStatus status) {
         Map<String, Object> body = new HashMap<>();
         body.put("error", error);
         body.put("message", message);
         body.put("status", status.value());
         body.put("timestamp", Instant.now().toString());
-        return ResponseEntity
-                .status(status)
-                .body(body);
+        return body;
     }
 }

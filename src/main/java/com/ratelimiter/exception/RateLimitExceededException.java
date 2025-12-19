@@ -1,6 +1,6 @@
 package com.ratelimiter.exception;
 
-import com.ratelimiter.model.RateLimitResult;
+import com.ratelimiter.model.RateLimitStatus;
 import lombok.Getter;
 
 /**
@@ -10,19 +10,19 @@ import lombok.Getter;
 @Getter
 public class RateLimitExceededException extends RuntimeException {
 
-    private final RateLimitResult rateLimitResult;
+    private final RateLimitStatus rateLimitStatus;
 
     // Identifier that was rate limited (userID, ip, API key)
     private final String identifier;
 
-    public RateLimitExceededException(String identifier, RateLimitResult rateLimitResult) {
-        super(String.format("Rate limit exceeded for '%s'. Retry after %d ms.", identifier, rateLimitResult.getRetryAfterMs()));
+    public RateLimitExceededException(String identifier, RateLimitStatus rateLimitStatus) {
+        super(String.format("Rate limit exceeded for '%s'. Retry after %d ms.", identifier, rateLimitStatus.getRetryAfterMs()));
         this.identifier = identifier;
-        this.rateLimitResult = rateLimitResult;
+        this.rateLimitStatus = rateLimitStatus;
     }
 
     public long getRetryAfterSeconds() {
-        return (long) Math.ceil(rateLimitResult.getRetryAfterMs() / 1000.0);
+        return (long) Math.ceil(rateLimitStatus.getRetryAfterMs() / 1000.0);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.ratelimiter.controller;
 
 import com.ratelimiter.configuration.RateLimitConfig;
-import com.ratelimiter.model.RateLimitResult;
+import com.ratelimiter.model.RateLimitStatus;
 import com.ratelimiter.service.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +46,7 @@ public class ApiController {
      */
     @GetMapping("/limit/status")
     public ResponseEntity<Map<String, Object>> getLimitStatus(@RequestParam String key) {
-        RateLimitResult result = rateLimiter.peek(key);
+        RateLimitStatus result = rateLimiter.peek(key);
         Map<String, Object> response = new HashMap<>();
         response.put("key", key);
         response.put("limit", result.getLimit());

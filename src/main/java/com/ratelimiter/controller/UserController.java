@@ -2,7 +2,7 @@ package com.ratelimiter.controller;
 
 import com.ratelimiter.dto.UserRequest;
 import com.ratelimiter.dto.UserResponse;
-import com.ratelimiter.model.RateLimitResult;
+import com.ratelimiter.model.RateLimitStatus;
 import com.ratelimiter.model.User;
 import com.ratelimiter.service.RateLimiter;
 import com.ratelimiter.service.UserService;
@@ -136,16 +136,16 @@ public class UserController {
         return userService.getUserById(id)
                 .map(user -> {
                     String rateLimitKey = "user:" + user.getId();
-                    RateLimitResult rateLimitResult = rateLimiter.peek(rateLimitKey);
+                    RateLimitStatus rateLimitStatus = rateLimiter.peek(rateLimitKey);
                     Map<String, Object> usage = new HashMap<>();
                     usage.put("userId", user.getId());
                     usage.put("username", user.getUsername());
                     usage.put("tier", user.getTier());
                     usage.put("enabled", user.isEnabled());
                     usage.put("rateLimitKey", rateLimitKey);
-                    usage.put("remainingTokens", rateLimitResult.getRemainingTokens());
-                    usage.put("limit", rateLimitResult.getLimit());
-                    usage.put("resetAtSeconds", rateLimitResult.getResetAtSeconds());
+                    usage.put("remainingTokens", rateLimitStatus.getRemainingTokens());
+                    usage.put("limit", rateLimitStatus.getLimit());
+                    usage.put("resetAtSeconds", rateLimitStatus.getResetAtSeconds());
                     return ResponseEntity.ok(usage);
                 })
                 .orElse(ResponseEntity.notFound().build());
