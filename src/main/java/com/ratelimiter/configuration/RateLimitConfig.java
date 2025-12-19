@@ -5,14 +5,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Configuration for rate limiting with support for multiple user tiers
+ * Configuration for rate limiting with support for multiple user tiers.
  * <p>
- * Allows different rate limits for different user types
+ * Supports hierarchical tier access where higher tiers can access lower tier endpoints
+ * with their own rate limits, and lower tiers get degraded (grace) access to higher tier endpoints.
+ * <p>
+ * Tier hierarchy (lowest to highest): free → premium → enterprise
  * <ul>
- *     <li>FREE tier: Lower limits for free users</li>
+ *     <li>FREE tier: Basic limits for free users</li>
  *     <li>PREMIUM tier: Higher limits for paying customers</li>
  *     <li>ENTERPRISE tier: Highest limits for enterprise customers</li>
  * </ul>
@@ -28,11 +32,11 @@ public class RateLimitConfig {
     // Default refill rate (tokens/second) if no tier specified
     private double defaultRefillRate = 1.0;
 
-    // Whether rate limiting is enabled globally
-    private boolean enabled = true;
-
     // Storage backend for rate limiting.
     private String storage = "in-memory";
+
+    // Tier hierarchy from lowest to highest priority.
+    private List<String> tierHierarchy = List.of("free", "premium", "enterprise");
 
     /**
      * Map of tier name to tier configuration
@@ -40,21 +44,29 @@ public class RateLimitConfig {
      */
     private Map<String, TierConfig> tiers = new HashMap<>();
 
-    // Configuration of a specific user tier
+    /**
+     * Configuration of a specific user tier.
+     * <p>
+     * The tier's capacity and refillRate define:
+     * <ul>
+     *     <li>Full rate limits when accessing endpoints at or below this tier</li>
+     *     <li>Grace limits when accessing endpoints above this tier</li>
+     * </ul>
+     */
     @Data
     public static class TierConfig {
-        // maximum tokens the bucket can hold (burst capacity)
+        // Maximum tokens the bucket can hold (burst capacity)
         private long capacity = 10;
 
-        // tokens added per second (sustained rate)
+        // Tokens added per second (sustained rate)
         private double refillRate = 1.0;
 
         private String description;
     }
 
     /**
-     * Gets the configuration for a specific tier
-     * Falls back to default values if tier is not found
+     * Gets the configuration for a specific tier.
+     * Falls back to default values if tier is not found.
      *
      * @param tierName The tier name ("free", "premium", "enterprise")
      * @return TierConfig with capacity and refill rate
@@ -69,6 +81,31 @@ public class RateLimitConfig {
             return defaultConfig;
         }
         return tiers.get(tierName.toLowerCase());
+    }
+
+    /**
+     * Gets the priority level of a tier (higher = more privileged).
+     *
+     * @param tierName The tier name
+     * @return Priority level (0 = lowest), or -1 if tier not in hierarchy
+     */
+    public int getTierPriority(String tierName) {
+        if (tierName == null) {
+            return 0; // Treat null as lowest tier (free)
+        }
+        int index = tierHierarchy.indexOf(tierName.toLowerCase());
+        return Math.max(index, 0); // Default to lowest if not found
+    }
+
+    /**
+     * Checks if a user's tier meets or exceeds the required tier.
+     *
+     * @param userTier     The user's tier
+     * @param requiredTier The tier required by the endpoint
+     * @return true if user has sufficient tier level
+     */
+    public boolean hasAccess(String userTier, String requiredTier) {
+        return getTierPriority(userTier) >= getTierPriority(requiredTier);
     }
 
 }
