@@ -124,7 +124,7 @@ public class ClientIdentityResolver {
     /**
      * Adds standard rate limit headers to the HTTP response.
      *
-     * @param response the HTTP response (may be null)
+     * @param response the HTTP response (maybe null)
      * @param result   the rate limit result containing limit info
      */
     public void addRateLimitHeaders(HttpServletResponse response, RateLimitStatus result) {

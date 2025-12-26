@@ -1,6 +1,8 @@
 package com.ratelimiter.configuration;
 
+import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -56,10 +58,10 @@ public class RateLimitConfig {
     @Data
     public static class TierConfig {
         // Maximum tokens the bucket can hold (burst capacity)
-        private long capacity = 10;
+        private long capacity;
 
         // Tokens added per second (sustained rate)
-        private double refillRate = 1.0;
+        private double refillRate;
 
         private String description;
     }
@@ -72,7 +74,7 @@ public class RateLimitConfig {
      * @return TierConfig with capacity and refill rate
      */
     public TierConfig getTierConfig(String tierName) {
-        if (tierName == null || !tiers.containsKey(tierName.toLowerCase())) {
+        if (StringUtils.isBlank(tierName) || !tiers.containsKey(tierName.toLowerCase())) {
             // Return default tier config
             TierConfig defaultConfig = new TierConfig();
             defaultConfig.setCapacity(defaultCapacity);
@@ -90,8 +92,9 @@ public class RateLimitConfig {
      * @return Priority level (0 = lowest), or -1 if tier not in hierarchy
      */
     public int getTierPriority(String tierName) {
-        if (tierName == null) {
-            return 0; // Treat null as lowest tier (free)
+        // Treat null/empty as lowest tier (free)
+        if (StringUtils.isBlank(tierName)) {
+            return 0;
         }
         int index = tierHierarchy.indexOf(tierName.toLowerCase());
         return Math.max(index, 0); // Default to lowest if not found

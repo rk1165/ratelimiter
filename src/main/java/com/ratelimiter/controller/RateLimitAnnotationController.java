@@ -25,8 +25,8 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/examples")
-public class RateLimitedExampleController {
+@RequestMapping("/api/v1/ratelimit")
+public class RateLimitAnnotationController {
 
     /**
      * Free tier endpoint - accessible by all users with their tier's rate limits.
